@@ -3,9 +3,18 @@ import { DomainEvent } from '../../domain/domain-event/domain-event'
 import { IEventHandler } from '../../application/event-handler/event-handler.interface'
 import { IEventSubscriber } from '../../application/event-handler/subscriber.interface'
 
-export class EventBusCharris implements IEventHandler {
+interface key{
+    key:string
+}
 
-    public static instance?: IEventHandler = undefined
+interface event{
+    function:FunctionConstructor
+}
+
+export class EventBus implements IEventHandler {
+
+    private instance: IEventHandler
+    
     private subscribers: {[key: string]: (( event: DomainEvent ) => Promise<void>)[]}
 
     private constructor()
@@ -13,8 +22,10 @@ export class EventBusCharris implements IEventHandler {
         this.subscribers = {}
     }
 
-    public static getInstance(): IEventHandler {
-        return this.instance = new EventBusCharris()
+    public getInstance(): IEventHandler {
+        if (!this.instance)
+            return this.instance = new EventBus()
+        return this.instance
     }
 
     async publish ( events: DomainEvent[] ): Promise<void>
